@@ -111,8 +111,23 @@ src/main/resources/
 
 ## Actividades propuestas
 1. Revisar el código de configuración de seguridad (`SecurityConfig`) e identificar cómo se definen los endpoints públicos y protegidos.
+  Los endpoints se diferencian por lo siguiente:
+  1. Públicos (sin token): /auth/login, y los endpoints de Swagger.
+  2. Protegidos: cualquier ruta /api/** requiere el scope blueprints.read o blueprints.write.
+  El resto: requiere estar autenticado Para esto se usa JWT.
 2. Explorar el flujo de login y analizar las claims del JWT emitido.
+  1. Se hace POST a /auth/login con username y password
+  2. InMemoryUserService valida las credenciales contra los usuarios en memoria (student/student123, assistant/assistant123).
+  Si son válidas, AuthController genera un JWT firmado con RSA256 que contiene estas claims:
+    * iss = issuer (de las properties)
+    * iat = fecha de emisión
+    * exp = fecha de expiración
+    * sub = el username
+    * scope = "blueprints.read blueprints.write"
+  Al usar la herramienta jwt.io podemos verificar esta informacion como se ve en la siguiente imagen:
+  ![](images/jwt_io.png)
 3. Extender los scopes (`blueprints.read`, `blueprints.write`) para controlar otros endpoints de la API, del laboratorio P1 trabajado.
+  Para esto se modifica SecurityConfig y AuthController.
 4. Modificar el tiempo de expiración del token y observar el efecto.
    Para controlar cuánto dura el token JWT solo se cambió la propiedad `token-ttl-seconds` en el `application.yml`, ese valor lo lee `RsaKeyProperties` cuando arranca la app y luego llega al `AuthController`, donde se usa en `now.plusSeconds(ttl)` para definir el `exp` del token, cuando lo bajé a 30 segundos el token generado en `/auth/login` dejaba de funcionar en menos de un minuto, y cualquier petición a `/api/blueprints` respondía con 401 y el mensaje *"Jwt expired"*
 
