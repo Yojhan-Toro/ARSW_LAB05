@@ -1,5 +1,7 @@
 # Escuela Colombiana de Ingeniería Julio Garavito
 ## Arquitectura de Software – ARSW
+### Yojhan Toro - Ivan Cubillos
+
 ### Laboratorio – Parte 2: BluePrints API con Seguridad JWT (OAuth 2.0)
 
 Este laboratorio extiende la **Parte 1** ([Lab_P1_BluePrints_Java21_API](https://github.com/DECSIS-ECI/Lab_P1_BluePrints_Java21_API)) agregando **seguridad a la API** usando **Spring Boot 3, Java 21 y JWT (OAuth 2.0)**.  
@@ -114,10 +116,10 @@ src/main/resources/
 4. Modificar el tiempo de expiración del token y observar el efecto.
    Para controlar cuánto dura el token JWT solo se cambió la propiedad `token-ttl-seconds` en el `application.yml`, ese valor lo lee `RsaKeyProperties` cuando arranca la app y luego llega al `AuthController`, donde se usa en `now.plusSeconds(ttl)` para definir el `exp` del token, cuando lo bajé a 30 segundos el token generado en `/auth/login` dejaba de funcionar en menos de un minuto, y cualquier petición a `/api/blueprints` respondía con 401 y el mensaje *"Jwt expired"*
 
-    El tiempo por defecto estaba en una hora como se muestra en la siguiente imagen:
+    El tiempo por defecto estaba en una hora, como se muestra en la siguiente imagen:
    ![](images/0.png)
 
-    Luego cuando cambiamos el tiempo a 30 segundos se la peticion se ve como:
+    Luego cuando cambiamos el tiempo a 30 segundos la peticion se ve como:
    ![](images/1.png)
 
     Utilizamos el token en una consulta para verificar su funcionamiento:
