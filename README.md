@@ -112,7 +112,28 @@ src/main/resources/
 2. Explorar el flujo de login y analizar las claims del JWT emitido.
 3. Extender los scopes (`blueprints.read`, `blueprints.write`) para controlar otros endpoints de la API, del laboratorio P1 trabajado.
 4. Modificar el tiempo de expiración del token y observar el efecto.
+   Para controlar cuánto dura el token JWT solo se cambió la propiedad `token-ttl-seconds` en el `application.yml`, ese valor lo lee `RsaKeyProperties` cuando arranca la app y luego llega al `AuthController`, donde se usa en `now.plusSeconds(ttl)` para definir el `exp` del token, cuando lo bajé a 30 segundos el token generado en `/auth/login` dejaba de funcionar en menos de un minuto, y cualquier petición a `/api/blueprints` respondía con 401 y el mensaje *"Jwt expired"*
+
+    El tiempo por defecto estaba en una hora como se muestra en la siguiente imagen:
+   ![](images/0.png)
+
+    Luego cuando cambiamos el tiempo a 30 segundos se la peticion se ve como:
+   ![](images/1.png)
+
+    Utilizamos el token en una consulta para verificar su funcionamiento:
+   ![](images/2.png)
+   ![](images/3.png)
+
+    Y esperamos 30 segundos para ver si el token expira correctamente:
+   ![](images/4.png)
+
 5. Documentar en Swagger los endpoints de autenticación y de negocio.
+
+   Para documentar los endpoints se usaron las anotaciones de SpringDoc OpenAPI directamente en los controladores, en el AuthController se agregó @Tag para que aparezca en la sección Autenticacion en Swagger, y @Operation para explicar qué hace el login, los usuarios de prueba y la nota del TTL configurable, también se anotaron los records LoginRequest y TokenResponse con @Schema para que Swagger muestre la descripción y ejemplos de cada campo, en el BlueprintController se hizo lo mismo, agregando @Tag, @Operation y @ApiResponses en los métodos GET y POST, incluyendo los códigos 200, 401 y 403 con ejemplos en JSON, además se puso @SecurityRequirement(name = "bearer-jwt") a nivel de clase para que salga el candado en los endpoints y se pueda meter el token desde el botón Authorize en http://localhost:8080/swagger-ui.html
+
+   ![](images/5.png)
+   ![](images/6.png)
+   ![](images/7.png)
 
 ---
 
